@@ -12,7 +12,9 @@ import errno
 #The top level directory to scan and then move items into folder based on the
 #first relevant character of the movie title, following by a directory that is the movie name
 #then all files related to the movie in that directory.
-reorg_dir = "/mnt/freenas/multimedia/Movies/"
+source_root = "/mnt/freenas/multimedia/Downloads/other/movies/"
+target_root = "/mnt/freenas/multimedia/Movies/"
+
 
 #Valid file suffixes to group into the same folder as the associated movie
 suffixes = ("-trailer.mp4", "-trailer.mov","-clearart.png","-fanart.jpg","-logo.png","-poster.jpg","-thumb.jpg", ".orig.nfo", "-banner.jpg", "-disc.png", "-landscape.jpg", "thumb.jpg", ".nfo", ".srt", ".sub")
@@ -77,21 +79,21 @@ def mkdir_p(path):
 #
 # Main loop
 #
-for root, dirs, files in os.walk(reorg_dir):
+for root, dirs, files in os.walk(source_root):
 	print root
 	for name in sorted(files):
 		filename, file_extension = os.path.splitext(name)
 		soure_path = root + name
 
 		if(shouldIgnore(name)):
-			target_dir = root + mapToFolder(name)
+			target_dir = target_root + mapToFolder(name)
 			print "mv " + soure_path + " " + target_dir + "/" + name
 			if(not is_dry_run):
 				mkdir_p(target_dir)
 				os.rename(soure_path, target_dir + "/" + name)
 			
 		elif(isSupportedVideo(name)):
-			target_dir = root + mapToFolder(filename)
+			target_dir = target_root + mapToFolder(filename)
 			print "mv " + soure_path + " " + target_dir + "/" + name
 			if(not is_dry_run):
 				mkdir_p(target_dir)
